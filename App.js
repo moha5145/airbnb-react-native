@@ -10,6 +10,7 @@ import SignInScreen from "./containers/SignInScreen";
 import SignUpScreen from "./containers/SignUpScreen";
 import SettingsScreen from "./containers/SettingsScreen";
 import SplashScreen from "./containers/SplashScreen";
+import RoomScreen from "./containers/RoomScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -55,12 +56,15 @@ export default function App() {
         {userToken === null ? (
           // No token found, user isn't signed in
           <>
-            <Stack.Screen name="SignIn">
+            <Stack.Screen
+              name="SignIn"
+              screenOptions={{
+                headerShown: true,
+              }}
+            >
               {() => <SignInScreen setToken={setToken} />}
             </Stack.Screen>
-            <Stack.Screen name="SignUp">
-              {() => <SignUpScreen setToken={setToken} />}
-            </Stack.Screen>
+            <Stack.Screen name="SignUp">{() => <SignUpScreen setToken={setToken} />}</Stack.Screen>
           </>
         ) : (
           // User is signed in ! 🎉
@@ -77,9 +81,7 @@ export default function App() {
                   name="TabHome"
                   options={{
                     tabBarLabel: "Home",
-                    tabBarIcon: ({ color, size }) => (
-                      <Ionicons name={"ios-home"} size={size} color={color} />
-                    ),
+                    tabBarIcon: ({ color, size }) => <Ionicons name={"ios-home"} size={size} color={color} />,
                   }}
                 >
                   {() => (
@@ -94,6 +96,8 @@ export default function App() {
                       >
                         {() => <HomeScreen />}
                       </Stack.Screen>
+
+                      <Stack.Screen name="Room" component={RoomScreen}></Stack.Screen>
 
                       <Stack.Screen
                         name="Profile"
@@ -110,13 +114,7 @@ export default function App() {
                   name="TabSettings"
                   options={{
                     tabBarLabel: "Settings",
-                    tabBarIcon: ({ color, size }) => (
-                      <Ionicons
-                        name={"ios-options"}
-                        size={size}
-                        color={color}
-                      />
-                    ),
+                    tabBarIcon: ({ color, size }) => <Ionicons name={"ios-options"} size={size} color={color} />,
                   }}
                 >
                   {() => (

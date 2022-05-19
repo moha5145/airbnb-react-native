@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Text, TextInput, View, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Feather } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SignUpScreen({ setToken }) {
   const navigation = useNavigation();
@@ -33,8 +34,10 @@ export default function SignUpScreen({ setToken }) {
         console.log("response =>", response.data);
         const userToken = response.data.token;
         if (userToken) {
-          alert("Vous êtes connecté");
           setToken(userToken);
+          // await AsyncStorage.setItem("userToken", userToken);
+          alert("Vous êtes connecté");
+          // console.log("storage =>", await AsyncStorage.getItem("userToken"));
         }
       }
     } catch (error) {
@@ -42,6 +45,8 @@ export default function SignUpScreen({ setToken }) {
         setError("Email ou mot de pass incorecte");
       } else if (error.response.data.error === "This email already has an account.") {
         setError("Cet e-mail a déjà un compte.");
+      } else if (error.response.data.error === "This username already has an account.") {
+        setError("Ce nom d'utilisateur est déja pris");
       }
       console.log("error ==>", error.response.data);
     }
