@@ -1,13 +1,13 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 const Maincard = ({ item }) => {
-  console.log(item);
+  // console.log(item);
   // return <Text>hi</Text>;
   const ratingStars = (ratingValue) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
       if (i < ratingValue) {
-        console.log(ratingValue[i]);
+        // console.log(ratingValue[i]);
         stars.push(<AntDesign key={i} name="star" size={24} color="#feb202" style={styles.wel} />);
       } else {
         stars.push(<AntDesign key={i} name="star" size={24} color="#bbbbbb" style={styles.wel} />);

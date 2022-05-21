@@ -1,12 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View, FlatList, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, TouchableOpacity } from "react-native";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
+import MapView from "react-native-maps";
 
 // import { AntDesign } from "@expo/vector-icons";
 import Maincard from "../components/MainCard";
 const Room = ({ route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [room, setRoom] = useState();
+  const [showAllDescription, setShowAlldescription] = useState(false);
   // console.log(route);
   useEffect(() => {
     const fetchData = async () => {
@@ -23,11 +26,34 @@ const Room = ({ route }) => {
     <ActivityIndicator></ActivityIndicator>
   ) : (
     <View style={styles.container}>
-      <Image source={require("../assets/logo.png")} style={styles.logo}></Image>
-
       <Maincard item={room} />
 
-      <Text numberOfLines={3}>{room.description}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          setShowAlldescription(!showAllDescription);
+        }}
+      >
+        <Text numberOfLines={!showAllDescription ? 3 : null}>{room.description}</Text>
+      </TouchableOpacity>
+
+      <MapView
+        style={{ flex: 1 }}
+        initialRegion={{
+          latitude: room.location[1],
+          longitude: room.location[0],
+          latitudeDelta: 0.5,
+          longitudeDelta: 0.5,
+        }}
+      >
+        <MapView.Marker
+          coordinate={{
+            latitude: room.location[1],
+            longitude: room.location[0],
+          }}
+          title={room.title}
+          description={room.description}
+        />
+      </MapView>
     </View>
   );
 };

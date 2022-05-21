@@ -2,12 +2,12 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/core";
 import { useState } from "react";
 import { Button, Text, TextInput, View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import CustomInput from "../components/CustomInput";
+import { Feather } from "@expo/vector-icons";
 
-export default function SignInScreen({ setToken }) {
+export default function SignInScreen({ setToken, setUser, error, setError, email, setEmail, password, setPassowrd }) {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassord] = useState("");
-  const [error, setError] = useState("");
+  const [visible, setVisible] = useState(true);
 
   const signIn = async () => {
     try {
@@ -22,18 +22,21 @@ export default function SignInScreen({ setToken }) {
           password: password,
         });
 
-        console.log("response =>", response.data.token);
+        // console.log("response =>", response.data.token);
         const userToken = response.data.token;
+        // console.log(response.data.id);
+        const userId = response.data.id;
         if (userToken) {
           alert("Vous êtes connecté");
           setToken(userToken);
+          setUser(userId);
         }
       }
     } catch (error) {
       if (error.response.data.error === "Unauthorized") {
         setError("Email ou mot de pass incorecte");
       }
-      console.log("error ==>", error.response.data);
+      // console.log("error ==>", error.response.data);
     }
   };
   return (
@@ -43,23 +46,33 @@ export default function SignInScreen({ setToken }) {
         <Text style={styles.signIn}>Sign in</Text>
       </View>
       <View style={styles.userInfo}>
-        <TextInput
-          placeholder="Email"
-          style={styles.email}
-          onChangeText={(text) => {
-            setEmail(text);
-          }}
-        />
+        <CustomInput setState={setEmail} placeholder={"Email"} value={email} />
 
-        <TextInput
-          placeholder="Password"
-          secureTextEntry={true}
-          style={styles.password}
-          onChangeText={(text) => {
-            setPassord(text);
-          }}
-        />
+        <View style={{ flexDirection: "row", width: "90%" }}>
+          <CustomInput setState={setPassowrd} placeholder={"Password"} value={password} secureTextEntry={visible} />
+          {!visible ? (
+            <Feather
+              style={{ alignItems: "center" }}
+              name="eye"
+              size={24}
+              color="black"
+              onPress={() => {
+                setVisible(true);
+              }}
+            />
+          ) : (
+            <Feather
+              name="eye-off"
+              size={24}
+              color="black"
+              onPress={() => {
+                setVisible(false);
+              }}
+            />
+          )}
+        </View>
       </View>
+
       {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
 
       <View style={styles.btnContainer}>

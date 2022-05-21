@@ -5,16 +5,27 @@ import { Text, TextInput, View, TouchableOpacity, Image, StyleSheet } from "reac
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomInput from "../components/CustomInput";
 
-export default function SignUpScreen({ setToken }) {
+export default function SignUpScreen({
+  setToken,
+  setUsername,
+  username,
+  password,
+  setPassword,
+  email,
+  setEmail,
+  description,
+  setDescription,
+  conirmPass,
+  setConirmPass,
+  error,
+  setError,
+  setUser,
+}) {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassord] = useState("");
-  const [username, setUserame] = useState("");
-  const [description, setDescription] = useState("");
-  const [conirmPass, setConirmPass] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [error, setError] = useState("");
+
+  const [visible, setVisible] = useState(true);
 
   const signUp = async () => {
     try {
@@ -31,9 +42,12 @@ export default function SignUpScreen({ setToken }) {
           password: password,
         });
 
-        console.log("response =>", response.data);
+        const userId = response.data.id;
+        // console.log("response =>", userId);
         const userToken = response.data.token;
         if (userToken) {
+          // await AsyncStorage.setItem("userId", userId);
+          setUser(userId);
           setToken(userToken);
           // await AsyncStorage.setItem("userToken", userToken);
           alert("Vous êtes connecté");
@@ -48,7 +62,7 @@ export default function SignUpScreen({ setToken }) {
       } else if (error.response.data.error === "This username already has an account.") {
         setError("Ce nom d'utilisateur est déja pris");
       }
-      console.log("error ==>", error.response.data);
+      // console.log("error ==>", error.response.data);
     }
   };
   return (
@@ -59,21 +73,9 @@ export default function SignUpScreen({ setToken }) {
           <Text style={styles.signIn}>Sign Up</Text>
         </View>
         <View style={styles.userInfoContainer}>
-          <TextInput
-            style={styles.userInfo}
-            placeholder="User name"
-            onChangeText={(text) => {
-              setUserame(text);
-            }}
-          />
+          <CustomInput setState={setUsername} placeholder={"User name"} value={username} />
 
-          <TextInput
-            style={styles.userInfo}
-            placeholder="Email"
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-          />
+          <CustomInput setState={setEmail} placeholder={"Email"} value={email} />
 
           <TextInput
             style={styles.userDescription}
@@ -83,17 +85,12 @@ export default function SignUpScreen({ setToken }) {
             onChangeText={(text) => {
               setDescription(text);
             }}
+            value={description}
           />
 
           <View style={{ width: "90%", flexDirection: "row" }}>
-            <TextInput
-              style={styles.userInfo}
-              placeholder="Password"
-              secureTextEntry={visible}
-              onChangeText={(text) => {
-                setPassord(text);
-              }}
-            ></TextInput>
+            <CustomInput setState={setPassword} placeholder={"Password"} value={password} secureTextEntry={visible} />
+
             {!visible ? (
               <Feather
                 style={{ alignItems: "center" }}
@@ -116,14 +113,30 @@ export default function SignUpScreen({ setToken }) {
             )}
           </View>
 
-          <TextInput
-            style={styles.userInfo}
-            placeholder="Confirm Password"
-            secureTextEntry={true}
-            onChangeText={(text) => {
-              setConirmPass(text);
-            }}
-          />
+          <View style={{ width: "90%", flexDirection: "row" }}>
+            <CustomInput setState={setConirmPass} placeholder={"Confirm Password"} value={conirmPass} secureTextEntry={visible} />
+
+            {!visible ? (
+              <Feather
+                style={{ alignItems: "center" }}
+                name="eye"
+                size={24}
+                color="black"
+                onPress={() => {
+                  setVisible(true);
+                }}
+              />
+            ) : (
+              <Feather
+                name="eye-off"
+                size={24}
+                color="black"
+                onPress={() => {
+                  setVisible(false);
+                }}
+              />
+            )}
+          </View>
         </View>
 
         {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
